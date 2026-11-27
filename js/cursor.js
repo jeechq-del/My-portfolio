@@ -9,13 +9,15 @@
   ring.setAttribute('aria-hidden', 'true');
   dot.setAttribute('aria-hidden', 'true');
   document.body.append(ring, dot);
-  document.documentElement.classList.add('has-cursor');
+  // Oculto hasta el primer movimiento del mouse (evita que asome en la esquina)
+  document.documentElement.classList.add('has-cursor', 'cursor-hidden');
 
   const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let mx = -100, my = -100, rx = -100, ry = -100;
+  let mx = -100, my = -100, rx = -100, ry = -100, first = true;
 
   addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
+    if (first) { rx = mx; ry = my; first = false; } // el anillo aparece donde está el mouse
     dot.style.transform = `translate(${mx}px, ${my}px)`;
     if (!smooth) ring.style.transform = `translate(${mx}px, ${my}px)`;
     document.documentElement.classList.remove('cursor-hidden');
