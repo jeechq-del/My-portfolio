@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git sin miedo: el flujo de ramas que usamos en equipo | Jennyfer Choque</title>
+  <meta name="description" content="Un flujo de ramas simple con Git y GitHub para trabajar en equipo sin pisarse el código.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Lobster&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/post.css">
+</head>
+<body class="post-page">
+  <header class="nav post-nav">
+    <div class="nav__inner container">
+      <a href="../index.html" class="nav__brand"><span class="nav__logo">JC</span><span>jennyfer<span class="accent">.dev</span></span></a>
+      <a href="../index.html#blog" class="nav__link">← Blog</a>
+    </div>
+  </header>
+
+  <article class="post">
+    <a href="../index.html#blog" class="post__back">← volver al blog</a>
+    <h1>Git sin miedo: el flujo de ramas que usamos en equipo</h1>
+    <div class="post__meta"><time datetime="2026-11-06">6 nov 2026</time> · 3 min · <span>#git</span><span>#equipo</span></div>
+
+    <p>La primera vez que trabajé en equipo con Git, el miedo era siempre el mismo: <strong>"¿y si borro el trabajo de alguien?"</strong>. Con un flujo simple ese miedo desaparece. Este es el que usamos en el bootcamp.</p>
+
+    <h2>Las ramas</h2>
+    <ul>
+      <li><code>main</code>: solo código estable, lo que se puede mostrar.</li>
+      <li><code>develop</code>: donde se integra el trabajo del sprint.</li>
+      <li><code>feature/nombre-tarea</code>: una rama por cada tarea.</li>
+    </ul>
+
+    <h2>El ciclo de cada tarea</h2>
+<pre><code>git checkout develop
+git pull origin develop
+git checkout -b feature/consulta-disponibilidad
+# ...programo y hago commits pequeños...
+git add .
+git commit -m "feat: consulta de disponibilidad por fecha"
+git push origin feature/consulta-disponibilidad
+# luego abro un Pull Request hacia develop</code></pre>
+
+    <h2>Tres reglas que nos salvaron</h2>
+    <ol>
+      <li><strong>Commits pequeños con mensajes claros</strong> (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>).</li>
+      <li><strong>Hacer pull antes de empezar</strong>, todos los días.</li>
+      <li><strong>Nadie hace merge de su propio PR</strong>: alguien más lo revisa.</li>
+    </ol>
+
+    <h2>¿Y los conflictos?</h2>
+    <p>No son un error, son una conversación. Git te muestra las dos versiones, decides con tu compañero cuál queda (o combinas ambas), haces commit y listo.</p>
+    <blockquote>Un buen equipo no es el que no tiene conflictos, sino el que sabe resolverlos.</blockquote>
+
+    <div class="post__end">
+      <a href="reservas-sin-cruces.html">← anterior: reservas sin cruces</a>
+      <a href="de-la-pizarra-al-codigo.html">siguiente: de la pizarra al código →</a>
+    </div>
+  </article>
+  <script src="../js/cursor.js"></script>
+</body>
+</html>

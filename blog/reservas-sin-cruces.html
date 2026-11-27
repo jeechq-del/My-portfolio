@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cómo evitar reservas duplicadas con Spring Boot y SQL | Jennyfer Choque</title>
+  <meta name="description" content="Cómo validar la disponibilidad de horarios en una app de reservas con Java, Spring Boot y SQL.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Lobster&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/post.css">
+</head>
+<body class="post-page">
+  <header class="nav post-nav">
+    <div class="nav__inner container">
+      <a href="../index.html" class="nav__brand"><span class="nav__logo">JCh</span><span>jennyfer<span class="accent">.dev</span></span></a>
+      <a href="../index.html#blog" class="nav__link">← Blog</a>
+    </div>
+  </header>
+
+  <article class="post">
+    <a href="../index.html#blog" class="post__back">← volver al blog</a>
+    <h1>Cómo evitar reservas duplicadas con Spring Boot y SQL</h1>
+    <div class="post__meta"><time datetime="2026-11-20">20 nov 2026</time> · 4 min · <span>#java</span><span>#springboot</span><span>#sql</span></div>
+
+    <p>En <strong>MiCancha</strong>, nuestra plataforma de reserva de canchas deportivas, el siguiente gran paso es el flujo de reserva. Antes de programarlo, me tocó estudiar el problema más importante, que no es visual: <strong>dos personas no pueden reservar la misma cancha a la misma hora</strong>. Así es como lo voy a abordar en el backend con Spring Boot.</p>
+
+    <h2>1. La regla del cruce de horarios</h2>
+    <p>Dos reservas se cruzan cuando una empieza <em>antes</em> de que la otra termine y termina <em>después</em> de que la otra empiece. En SQL se escribe así:</p>
+<pre><code>SELECT COUNT(*) FROM reserva
+WHERE losa_id = :losaId
+  AND fecha = :fecha
+  AND hora_inicio &lt; :horaFin
+  AND hora_fin    &gt; :horaInicio;</code></pre>
+    <p>Si el resultado es mayor que 0, el horario <strong>ya está ocupado</strong>.</p>
+
+    <h2>2. Validar en el backend, no solo en la pantalla</h2>
+    <p>Deshabilitar un botón en el frontend ayuda, pero no basta. La validación definitiva debe vivir en el servicio:</p>
+<pre><code>@Transactional
+public Reserva crear(ReservaDTO dto) {
+    boolean ocupado = repo.existeCruce(dto.losaId(), dto.fecha(),
+                                       dto.horaInicio(), dto.horaFin());
+    if (ocupado) {
+        throw new HorarioNoDisponibleException("La losa ya está reservada en ese horario");
+    }
+    return repo.save(dto.toEntity());
+}</code></pre>
+
+    <h2>3. Índices para que la consulta sea rápida</h2>
+    <p>Como esta consulta se ejecuta en cada reserva y en cada búsqueda de disponibilidad, conviene un índice compuesto:</p>
+<pre><code>CREATE INDEX idx_reserva_losa_fecha ON reserva (losa_id, fecha);</code></pre>
+
+    <h2>Lo que me llevo</h2>
+    <ul>
+      <li>Primero hay que escribir la regla de negocio en palabras y después en código.</li>
+      <li>El backend es la única fuente de verdad.</li>
+      <li>Optimizar SQL no siempre es complicado: a veces basta con un buen índice.</li>
+    </ul>
+    <blockquote>Como en el aula: si puedes explicarlo simple, puedes programarlo bien.</blockquote>
+
+    <div class="post__end">
+      <a href="../index.html#blog">← todos los artículos</a>
+      <a href="git-en-equipo.html">siguiente: Git sin miedo →</a>
+    </div>
+  </article>
+  <script src="../js/cursor.js"></script>
+</body>
+</html>
